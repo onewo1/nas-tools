@@ -13,6 +13,8 @@ RUN apk add --no-cache --virtual .build-deps \
     && chmod +x /usr/bin/mc \
     && pip install --upgrade pip setuptools wheel -i https://pypi.tuna.tsinghua.edu.cn/simple/ \
     && pip install cython -i https://pypi.tuna.tsinghua.edu.cn/simple/ \
+    && pip install --ignore-installed packaging
+    && pip install audtorch
     && pip install -r https://raw.githubusercontent.com/onewo1/nas-tools50/master/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/ \
     && apk del --purge .build-deps \
     && rm -rf /tmp/* /root/.cache /var/cache/apk/*
