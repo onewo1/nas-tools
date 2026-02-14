@@ -1,21 +1,22 @@
 FROM alpine:3.17 AS Builder
 RUN apk add --no-cache --virtual .build-deps \
-        libffi-dev \
-        gcc \
-        musl-dev \
-        libxml2-dev \
-        libxslt-dev \
+    libffi-dev \
+    gcc \
+    musl-dev \
+    libxml2-dev \
+    libxslt-dev \
     && apk add --no-cache $(echo $(wget --no-check-certificate -qO- https://raw.githubusercontent.com/onewo1/nas-tools/master/package_list.txt)) \
     && ln -sf /usr/bin/python3 /usr/bin/python \
     && curl https://rclone.org/install.sh | bash \
     && if [ "$(uname -m)" = "x86_64" ]; then ARCH=amd64; elif [ "$(uname -m)" = "aarch64" ]; then ARCH=arm64; fi \
     && curl https://dl.min.io/client/mc/release/linux-${ARCH}/mc --create-dirs -o /usr/bin/mc \
     && chmod +x /usr/bin/mc \
-    && pip install --upgrade pip setuptools wheel \
-    && pip install cython \
-    && pip install -r https://raw.githubusercontent.com/onewo1/nas-tools/master/requirements.txt \
+    && pip install --upgrade pip setuptools wheel -i https://pypi.tuna.tsinghua.edu.cn/simple/ \
+    && pip install cython -i https://pypi.tuna.tsinghua.edu.cn/simple/ \
+    && pip install -r https://raw.githubusercontent.com/onewo1/nas-tools/master/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/ \
     && apk del --purge .build-deps \
     && rm -rf /tmp/* /root/.cache /var/cache/apk/*
+
 COPY --chmod=755 ./docker/rootfs /
 FROM scratch AS APP
 COPY --from=Builder / /
